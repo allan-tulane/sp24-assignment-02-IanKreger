@@ -46,16 +46,39 @@ def pad(x,y):
 
 
 def subquadratic_multiply(x, y):
-    ### TODO
-    pass
-    ###
+    xvec = x.binary_vec
+    yvec = y.binary_vec
+    xvec, yvec = pad(xvec, yvec)
 
+    if x.decimal_val<=1 and y.decimal_val<=1:
+      return BinaryNumber(x.decimal_val*y.decimal_val)
+
+    else:
+      x_left, x_right = split_number(xvec)
+      y_left, y_right = split_number(yvec)
+
+      p1 = subquadratic_multiply(x_left, y_left)
+      p2 = subquadratic_multiply(x_left, y_right)
+      p3 = subquadratic_multiply(x_right, y_left)
+      p4 = subquadratic_multiply(x_right, y_right)
+
+      shift1 = bit_shift(p1, len(xvec))
+      shift2 = bit_shift(p2, len(xvec)//2)
+      shift3 = bit_shift(p3, len(xvec)//2)
+
+      half = shift1.decimal_val+shift2.decimal_val
+
+      return(BinaryNumber(half + shift3.decimal_val + p4.decimal_val))
+
+    
 
 
 def time_multiply(x, y, f):
     start = time.time()
     # multiply two numbers x, y using function f
     return (time.time() - start)*1000
+
+
 
     
     
